@@ -1,0 +1,8 @@
+[project]
+name = "simplex_solver"
+version = "0.1.0"
+requires-python = ">=3.8"
+
+# 这部分是关键，它告诉 pip 你的源代码包在 src 文件夹里
+[tool.setuptools.packages.find]
+where = ["src"]

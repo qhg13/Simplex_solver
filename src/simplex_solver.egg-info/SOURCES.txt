@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+src/simplex_solver/__init__.py
+src/simplex_solver/basic_usage_2.py
+src/simplex_solver/solver.py
+src/simplex_solver.egg-info/PKG-INFO
+src/simplex_solver.egg-info/SOURCES.txt
+src/simplex_solver.egg-info/dependency_links.txt
+src/simplex_solver.egg-info/top_level.txt
