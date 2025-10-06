@@ -164,7 +164,11 @@ class SimplexSolver:
             if(self.init_x[intersection_index].any() != 0):
                 return {"success": False, "status" : SolverStatus.INFEASIBLE, "message": "infeasible solution", "index":None} # -2意味着无可行解
             
-        return {"success": True, "status" : SolverStatus.OPTIMAL, "message": "optimal solution found", "index":None, "solution": self.init_x, "objective_value": self.init_x @ self.c_basis} # -1说明已经最优解
+        solution = np.zeros(self.A_M.shape[1])
+        for i in range(self.A_M.shape[1]):
+            if(i in self.basis_record):
+                solution[i] = self.init_x[self.basis_record.index(i)]
+        return {"success": True, "status" : SolverStatus.OPTIMAL, "message": "optimal solution found", "index":None, "solution": solution, "objective_value": self.init_x @ self.c_basis} # -1说明已经最优解
     
     def compute_u(self, i): #找出基
         self.u = self.Binv @ self.A_M[:, i]
@@ -176,8 +180,13 @@ class SimplexSolver:
 
             #找最小theta x / u
             ratios_where = np.where(self.u > 0, self.init_x / self.u, np.inf)
-
-            theta_index_where = np.argmin(ratios_where) #最小下标原则
+            min_ratio = np.min(ratios_where)
+            all_theta_indices_where = np.where(ratios_where == min_ratio)[0]
+            #  找最小的下标
+            local_index = np.argmin(np.array(self.basis_record)[all_theta_indices_where])
+            theta_index_where = all_theta_indices_where[local_index]
+           
+            # theta_index_where = np.argmin(ratios_where) #最小下标原则
             return {"success": True, "status" : SolverStatus.NOT_SOLVED, "message": "not solved yet", "index": theta_index_where, "theta": ratios_where[theta_index_where]}
             # 返回出基变量是第几个
             
@@ -201,6 +210,8 @@ class SimplexSolver:
             if(j != theta_index_where):
                 self.Binv[j, :] = self.Binv[j, :] - self.Binv[theta_index_where, :] * self.u[j] / self.u[theta_index_where]
         self.Binv[theta_index_where, :] = self.Binv[theta_index_where, :] / self.u[theta_index_where]
+        #去除最后一列
+        self.Binv = self.Binv[:, :-1]
 
 
     def solve(self):
@@ -223,19 +234,15 @@ class SimplexSolver:
                             self.pivot(theta_index_where, i, theta)
                             if(reinversion_num >= 15):
                                 reinversion_num = 0
-                                # self.Binv = np.linalg.inv(self.basic_column)
                                 self.Binv = np.linalg.inv(self.B)
                             else:
                                 self.cumpute_newBinv(theta_index_where)
                             self.basis_record[theta_index_where] = i
-                            # print(self.basis_record)
-                            # print(self.init_x)
-                            # print(self.Binv)
+                        
                     else:
                         return u_result
             else:
                 return cj_result
 
         
-        
-                
+
