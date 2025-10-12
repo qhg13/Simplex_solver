@@ -10,22 +10,37 @@ import numpy as np
 
 
 
-c = [1, 1, -3]  # 目标函数系数
-A = [[1, -2,1], [-2, -1, 4]]   # 约束矩阵
-Aeq  = [[1, 0 ,-2]]
-b = [11, -3]
-beq = [1]
+# c = [1, 1, -3]  # 目标函数系数
+# A = [[1, -2,1], [-2, -1, 4]]   # 约束矩阵
+# Aeq  = [[1, 0 ,-2]]
+# b = [11, -3]
+# beq = [1]
 
-# c = [-10, -12,-12]
-# A = [[1, 2, 2], [2, 1, 2], [2, 2, 1]]
-# b = [20, 20, 20]
+c = [-10, -12,-12]
+A = [[1, 2, 2], [2, 1, 2], [2, 2, 1]]
+b = [20, 20, 20]
+
+
+# A = [[1, 2, 3], [2, 4, 6], [1, 1, 1]]
+# b = [6, 12, 3]
+# c = [1, 2, 3]
+
+# A = [[1, -1], [-1, 1]]
+# b = [0, 0]
+# c = [-1 , 0]
+
+# Aeq = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1]]
+# beq = [2, 2, 2, 2]
+# c = [1, 1, 1]
 
 
 
-Solver = SimplexSolver(c, A, b, Aeq, beq)
+
+
+Solver = SimplexSolver(c, A = A, b = b)
 # Solver.get_fullrank_matrix(Solver.A)
-Solver.convert_to_standard_form()
-Solver.Initiate_by_bigM_method()
+# Solver.convert_to_standard_form()
+# Solver.Initiate_by_bigM_method()
 result = Solver.solve()
 print(result)
 
