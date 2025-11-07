@@ -9,7 +9,9 @@
 ## 🚀 功能特性
 
 * 基于 revised-simplex method 实现线性规划问题求解
-* 使用大M来法进行初始化。
+* 使用大M来法进行初始化
+* 使用bland's rule 避免 cycling
+
 
 ---
 
@@ -79,7 +81,7 @@ except ImportError:
 # -----------------------------
 
 # 价值向量 c
-c = np.array([5, 4])
+c = np.array([-5, -4])
 
 # 约束系数矩阵 A
 A = np.array([
