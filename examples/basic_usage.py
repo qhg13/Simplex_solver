@@ -1,7 +1,8 @@
 from simplex_solver.solver import SimplexSolver
 import numpy as np
 from numpy import array
-
+import scipy
+import time
 # 示例问题
 # c = [1, 1, 1, 1, 1]  # 目标函数系数
 # A = [[1, 1, 1, 1, 1], [1, 2, 3, 4, 1], [1, 3, 4, 6, 1]]   # 约束矩阵
@@ -11,11 +12,11 @@ from numpy import array
 
 
 
-c = [1, 1, -3]  # 目标函数系数
-A = [[1, -2,1], [-2, -1, 4]]   # 约束矩阵
-Aeq  = [[1, 0 ,-2]]
-b = [11, -3]
-beq = [1]
+# c = [1, 1, -3]  # 目标函数系数
+# A = [[1, -2,1], [-2, -1, 4]]   # 约束矩阵
+# Aeq  = [[1, 0 ,-2]]
+# b = [11, -3]
+# beq = [1]
 
 # c = [-10, -12,-12]
 # A = [[1, 2, 2], [2, 1, 2], [2, 2, 1]]
@@ -555,11 +556,46 @@ beq = [1]
 #           1.29889827, -21.91343161]])
 # beq = array([ 1037.27873864, -1427.28049724,  1182.02202353,   224.10435167,
         #  898.04883639,  -973.54643558,   308.60551445])
+# c = np.array([-5, -4])
+# A = np.array([
+#     [6, 4],
+#     [1, 2],
+#     [-1, 1],
+#     [0, 1]
+# ])
+# b = np.array([24, 6, 1, 2])
+n = 500
+m = 100
+m_eq = 100
+c = np.random.uniform(0, 1, n) * 10
+A = np.random.randn(m, n) * 10
+Aeq = np.random.randn(m_eq, n) * 10
+x_feasible = np.random.uniform(0, 20, n) 
+beq = Aeq @ x_feasible
+b = A @ x_feasible + np.random.uniform(0, 5, m)
 
+
+
+
+start_time = time.perf_counter()
+result2 = scipy.optimize.linprog(c, A, b, Aeq, beq)
+x2 = result2.x
+end_time = time.perf_counter()
+print(result2)
+time2 = end_time - start_time
+
+start_time = time.perf_counter()
 Solver = SimplexSolver(c, A = A, b = b, Aeq = Aeq, beq = beq)
-# Solver.get_fullrank_matrix(Solver.A)
-# Solver.convert_to_standard_form()
-# Solver.Initiate_by_bigM_method()
-result = Solver.solve()
-print(result)
+# start_time = time.perf_counter()
+result1 = Solver.solve()
+end_time = time.perf_counter()
+time1 = end_time - start_time
+# print(result1)
+x1 = result1['solution']
+
+# print(result2)
+print(time2)
+print(time1)
+print(f'x1 与 x2 2范数误差为{np.linalg.norm(x1[:n] - x2)}')
+
 

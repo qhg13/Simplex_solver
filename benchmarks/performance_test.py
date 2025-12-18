@@ -9,33 +9,11 @@ matplotlib.rc("font",family='KaiTi')
 
 from simplex_solver.solver import SimplexSolver, SolverStatus
 N_START = 10      # n 的起始值
-N_END = 50   # n 的结束值
-N_STEP = 10       # n 的步长
+N_END = 200  # n 的结束值
+N_STEP = 5  # n 的步长
 NUM_CASES = 20    # 每个规模n的测试案例数量
 FEASIBLE_PROBABILITY = 0.8  # 80% 概率生成可行解
 if __name__ == "__main__":
-    # 设置中文字体，以防绘图时出现乱码
-    # 你可能需要根据你的操作系统选择一个存在的字体
-    # try:
-    #     matplotlib.rcParams['font.sans-serif'] = ['Heiti TC'] # Mac
-    #     matplotlib.rcParams['axes.unicode_minus'] = False
-    # except:
-    #     try:
-    #         matplotlib.rcParams['font.sans-serif'] = ['SimHei'] # Windows
-    #         matplotlib.rcParams['axes.unicode_minus'] = False
-    #     except:
-    #         print("未找到指定中文字体，绘图可能出现乱码。")
-    # try:
-    #     # 在 Windows 上，优先尝试微软雅黑、等线或黑体
-    #     # Matplotlib会依次尝试列表中的字体，直到找到一个可用的
-    #     plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'Dengxian', 'SimHei'] 
-    #     # 下面这行代码确保负号也能正常显示
-    #     plt.rcParams['axes.unicode_minus'] = False 
-    # except Exception as e:
-    #     print(f"设置中文字体失败: {e}")
-    #     print("图表中的中文可能显示为方框。")
-
-
     problem_sizes = []
     avg_times = []
     std_times = []
@@ -43,6 +21,7 @@ if __name__ == "__main__":
 # ... (脚本的其他部分不变) ...
 
 # 外层循环：遍历不同的问题规模 n
+try:
     for n in range(N_START, N_END + 1, N_STEP):
         m = n // 2
         meq = n // 4
@@ -119,6 +98,12 @@ if __name__ == "__main__":
     print(f"problem_sizes = {problem_sizes}")
     print(f"avg_times = {avg_times}")
     print(f"std_times = {std_times}")
+    avg_times_1 = np.power(avg_times, 1/3)
+    avg_times_1 = avg_times_1.tolist()
+except KeyboardInterrupt:
+    print("User termination in advance.")
+    avg_times_1 = np.power(avg_times, 1/3)
+    avg_times_1 = avg_times_1.tolist()
     # 3. 结果可视化
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(12, 8))
@@ -127,6 +112,8 @@ if __name__ == "__main__":
     #英文
     ax.errorbar(problem_sizes, avg_times, yerr=std_times, fmt='-o', 
                     capsize=5, label='Average Solving Time (with Std Dev)')
+    # ax.errorbar(problem_sizes, avg_times_1, yerr=std_times, fmt='-o', 
+    #                 capsize=5, label='Average Solving Time (with Std Dev)')
 
         
     #换成英文
@@ -142,7 +129,43 @@ if __name__ == "__main__":
         
         # 设置坐标轴从0开始，使图像更清晰
     ax.set_xlim(0, N_END + 20)
-    ax.set_ylim(0, max(avg_times) * 1.2 if avg_times else 1)
+    # ax.set_ylim(0, max(avg_times) * 1.2 if avg_times else 1)
+    ax.set_ylim(0, max(avg_times_1) * 1.2 if avg_times_1 else 1)
 
     plt.tight_layout()
     plt.show()
+    #结束程序
+    exit(0)
+
+
+plt.style.use('seaborn-v0_8-whitegrid')
+fig, ax = plt.subplots(figsize=(12, 8))
+
+        # 使用 errorbar 函数绘制带误差棒的图
+    #英文
+ax.errorbar(problem_sizes, avg_times, yerr=std_times, fmt='-o', 
+                    capsize=5, label='Average Solving Time (with Std Dev)')
+# ax.errorbar(problem_sizes, avg_times_1, yerr=std_times, fmt='-o', 
+#                     capsize=5, label='Average Solving Time (with Std Dev)')
+        
+    #换成英文
+ax.set_title('Simplex Solving Time vs. Problem Size', fontsize=16)
+
+    # ax.set_xlabel('问题规模 (变量数量 n)', fontsize=12)
+    # ax.set_ylabel('平均求解时间 (秒)', fontsize=12)
+    #换成英文
+ax.set_xlabel('Problem Size (n)', fontsize=12)
+ax.set_ylabel('Average Solving Time (seconds)', fontsize=12)
+
+ax.legend()
+        
+        # 设置坐标轴从0开始，使图像更清晰
+ax.set_xlim(0, N_END + 20)
+# ax.set_ylim(0, max(avg_times) * 1.2 if avg_times else 1)
+ax.set_ylim(0, max(avg_times_1) * 1.2 if avg_times_1 else 1)
+
+plt.tight_layout()
+plt.show()
+
+
+   
